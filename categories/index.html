@@ -380,25 +380,27 @@
 
   
 
-<link rel="stylesheet" href="//cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk.css">
-
-<script>
-NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
-  NexT.utils.getScript('//cdn.bootcdn.net/ajax/libs/gitalk/1.8.0/gitalk-component.js', () => {
-    var gitalk = new Gitalk({
-      clientID    : 'Ov23lifJRJGv085ZRnJ1',
-      clientSecret: 'd51ab5c2a704c50e001c80a595c2228d128ce16a',
-      repo        : 'golang_study_guide.github.io',
-      owner       : 'zzzpyyy',
-      admin       : ['zzzpyyy'],
-      id          : 'd0d227909d08af75f7558af13f4ca990',
-        language: '',
-      distractionFreeMode: true
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <div id="gitalk-container"></div>
+  <script src="https://unpkg.com/react/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var gitalk = new Gitalk({
+        clientID: 'Ov23lifJRJGv085ZRnJ1',
+        clientSecret: 'd51ab5c2a704c50e001c80a595c2228d128ce16a',
+        repo: 'golang_study_guide.github.io',
+        owner: '',
+        admin: [''],
+        id: location.pathname, // 确保唯一性和长度小于50
+        distractionFreeMode: true,
+        proxy: 'https://netnr-proxy.cloudno.de/https://github.com/login/oauth/access_token' // 如果使用代理
+      });
+      gitalk.render('gitalk-container');
     });
-    gitalk.render('gitalk-container');
-  }, window.Gitalk);
-});
-</script>
+  </script>
+
 
 </body>
 </html>
