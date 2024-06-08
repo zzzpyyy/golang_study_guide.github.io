@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io/about/index.html</loc>
+    
+    <lastmod>2024-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io/tags/index.html</loc>
+    
+    <lastmod>2024-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io/categories/index.html</loc>
+    
+    <lastmod>2024-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io/2024/06/08/test/</loc>
+    
+    <lastmod>2024-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io/2024/06/08/hello-world/</loc>
+    
+    <lastmod>2024-06-08</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  <url>
+    <loc>https://zzzpyyy.github.io/golang_study_guide.github.io</loc>
+    <lastmod>2024-06-08</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+
+  
+</urlset>
