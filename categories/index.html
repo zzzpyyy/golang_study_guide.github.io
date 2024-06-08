@@ -228,7 +228,7 @@
 
           </div>
           
-    <div class="comments" id="valine-comments"></div>
+    <div class="comments" id="gitalk-container"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -380,32 +380,23 @@
 
   
 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
 
 <script>
-NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
-  NexT.utils.getScript('//cdn.bootcdn.net/ajax/libs/valine/1.5.1/Valine.Pure.min.js', () => {
-    var GUEST = ['nick', 'mail', 'link'];
-    var guest = 'nick,mail,link';
-    guest = guest.split(',').filter(item => {
-      return GUEST.includes(item);
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'Ov23liMxpEeDkaAdtaXq',
+      clientSecret: 'ca425fe349b34ac3124f4355e937c20a72c3aee4',
+      repo        : 'golang_study_guide.github.io',
+      owner       : 'zzzpyyy',
+      admin       : ['zzzpyyy'],
+      id          : 'd0d227909d08af75f7558af13f4ca990',
+        language: '',
+      distractionFreeMode: true
     });
-    new Valine({
-      el         : '#valine-comments',
-      verify     : false,
-      notify     : false,
-      appId      : 'womso57IAeLw73K2VdjFi5XY-MdYXbMMI',
-      appKey     : 'G6tL31ms6h9dk1miwboSbrkZ',
-      placeholder: "Just go go",
-      avatar     : 'mm',
-      meta       : guest,
-      pageSize   : '10' || 10,
-      visitor    : false,
-      lang       : '' || 'zh-cn',
-      path       : location.pathname,
-      recordIP   : false,
-      serverURLs : ''
-    });
-  }, window.Valine);
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
 });
 </script>
 
