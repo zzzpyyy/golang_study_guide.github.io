@@ -462,7 +462,8 @@
         admin: [''],
         id: location.pathname, // 确保唯一性和长度小于50
         distractionFreeMode: true,
-        proxy: 'https://shielded-brushlands-08810.herokuapp.com/https://github.com/login/oauth/access_token' // 如果使用代理
+        proxy: 'https://cors-anywhere.azm.workers.dev/https://github.com/login/oauth/access_token
+' // 如果使用代理
       });
       gitalk.render('gitalk-container');
     });
