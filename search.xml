@@ -19,13 +19,127 @@
 ]]></content>
   </entry>
   <entry>
-    <title>字节面试</title>
-    <url>/golang_study_guide.github.io/2024/06/08/%E5%AD%97%E8%8A%82%E9%9D%A2%E8%AF%95/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>test</title>
     <url>/golang_study_guide.github.io/2024/06/08/test/</url>
     <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>字节面试题</title>
+    <url>/golang_study_guide.github.io/2024/06/08/%E5%AD%97%E8%8A%82%E9%9D%A2%E8%AF%95/</url>
+    <content><![CDATA[<h1 id="Golang"><a href="#Golang" class="headerlink" title="Golang"></a>Golang</h1><h2 id="1-new和make的区别"><a href="#1-new和make的区别" class="headerlink" title="1. new和make的区别"></a>1. new和make的区别</h2><p>两个关键字都可以初始化</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="built_in">make</span>：主要用于slice、<span class="keyword">map</span>、channel的初始化</span><br><span class="line"><span class="built_in">new</span>：根据传入的类型分配一片内存空间并返回指向这片内存空间的指针</span><br><span class="line">slice := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">100</span>)</span><br><span class="line">hash := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="type">int</span>]<span class="type">bool</span>, <span class="number">10</span>)</span><br><span class="line">ch := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>, <span class="number">5</span>)</span><br></pre></td></tr></table></figure>
+<p>slice 是一个包含 data、cap 和 len 的结构体 reflect.SliceHeader；<br>hash 是一个指向 runtime.hmap 结构体的指针；<br>ch 是一个指向 runtime.hchan 结构体的指针</p>
+<h2 id="2-函数传值和传指针的区别"><a href="#2-函数传值和传指针的区别" class="headerlink" title="2. 函数传值和传指针的区别"></a>2. 函数传值和传指针的区别</h2><p>传值： 将参数值复制一份传递给函数，函数内部对参数修改不会影响到原来的变量<br>传指针： 将参数的地址传递给函数，函数内部对参数修改会影响到原来的变量<br>区别： 性能可以提升，大型数据结构避免复制，数据拷贝，减少了内存使用，提高性能，但是会修改原有banal，在某些情况下安全性较低，可能会导致意外的副作用</p>
+<h2 id="3-数组和切片的区别"><a href="#3-数组和切片的区别" class="headerlink" title="3. 数组和切片的区别"></a>3. 数组和切片的区别</h2><p>数组的长度时固定的，切片是可变的、数组是值类型、而切片是引用类型<br>切片是对数组的封装、包含了指向数组的指针以及长度容量信息</p>
+<h2 id="4-什么是内存逃逸、在什么情况下发生、原理是什么"><a href="#4-什么是内存逃逸、在什么情况下发生、原理是什么" class="headerlink" title="4. 什么是内存逃逸、在什么情况下发生、原理是什么"></a>4. 什么是内存逃逸、在什么情况下发生、原理是什么</h2><p>内存逃逸：简单来说就是一个变量原本应该分配在栈上，但是由于生命周期超出函数的范围需要分配在堆上，go编译器在编译过中进行逃逸分析以确定变量应该分配在哪里<br>什么情况下发生：<br>返回指针：函数返回局部变量的指针</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createPointer</span><span class="params">()</span></span> *<span class="type">int</span> &#123;</span><br><span class="line">    a := <span class="number">10</span></span><br><span class="line">    <span class="keyword">return</span> &amp;a</span><br><span class="line">&#125;</span><br><span class="line">闭包捕获变量：闭包（匿名函数）捕获了外部变量</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createClosure</span><span class="params">()</span></span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">    a := <span class="number">10</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> <span class="type">int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> a</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">接口类型转换：当变量转换为接口类型时，由于接口可能在函数外使用，会逃逸到堆上</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">interfaceEscape</span><span class="params">()</span></span> <span class="keyword">interface</span>&#123;&#125; &#123;</span><br><span class="line">    a := <span class="number">10</span></span><br><span class="line">    <span class="keyword">return</span> a</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">动态数据结构：切片 、<span class="keyword">map</span>、channel，可能会逃逸到堆上</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">sliceEscape</span><span class="params">()</span></span> []<span class="type">int</span> &#123;</span><br><span class="line">    s := <span class="built_in">make</span>([]<span class="type">int</span>, <span class="number">0</span>, <span class="number">10</span>)</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>原理： go编译器在编译的过程中，会对每个变量进行逃逸分析，来确定变量应该分配到栈上还是堆上，主要包括分析变量的生命周期，以及是否存在指针或者引用的情况，闭包捕获的情况<br>可以使用go build -gcflags&#x3D;”-m”来进行分析</p>
+<h2 id="5-逃逸分析，写一个"><a href="#5-逃逸分析，写一个" class="headerlink" title="5. 逃逸分析，写一个"></a>5. 逃逸分析，写一个</h2><p>go build -gcflags&#x3D;-m xxx.go </p>
+<h2 id="6-Golang-GC-好与不好的点"><a href="#6-Golang-GC-好与不好的点" class="headerlink" title="6. Golang GC  好与不好的点"></a>6. Golang GC  好与不好的点</h2><p>最常见的垃圾回收算法有标记清除(Mark-Sweep) 和引用计数(Reference Count)，Go 语言采用的是标记清除算法。并在此基础上使用了三色标记法和写屏障技术，提高了效率。<br>标记清除收集器是跟踪式垃圾收集器，其执行过程可以分成标记（Mark）和清除（Sweep）两个阶段：</p>
+<ul>
+<li>标记阶段 — 从根对象出发查找并标记堆中所有存活的对象；</li>
+<li>清除阶段 — 遍历堆中的全部对象，回收未被标记的垃圾对象并将回收的内存加入空闲链表。<br>标记清除算法的一大问题是在标记期间，需要暂停程序（Stop the world，STW），标记结束之后，用户程序才可以继续执行。为了能够异步执行，减少 STW 的时间，Go 语言采用了三色标记法。<br>三色标记算法将程序中的对象分成白色、黑色和灰色三类。</li>
+<li>白色：不确定对象。</li>
+<li>灰色：存活对象，子对象待处理。</li>
+<li>黑色：存活对象。<br>标记开始时，所有对象加入白色集合（这一步需 STW ）。首先将根对象标记为灰色，加入灰色集合，垃圾搜集器取出一个灰色对象，将其标记为黑色，并将其指向的对象标记为灰色，加入灰色集合。重复这个过程，直到灰色集合为空为止，标记阶段结束。那么白色对象即可需要清理的对象，而黑色对象均为根可达的对象，不能被清理。<br>三色标记法因为多了一个白色的状态来存放不确定对象，所以后续的标记阶段可以并发地执行。当然并发执行的代价是可能会造成一些遗漏，因为那些早先被标记为黑色的对象可能目前已经是不可达的了。所以三色标记法是一个 false negative（假阴性）的算法。<br>三色标记法并发执行仍存在一个问题，即在 GC 过程中，对象指针发生了改变。比如下面的例子：<br>正常情况下，D 对象最终会被标记为黑色，不应被回收。但在标记和用户程序并发执行过程中，用户程序删除了 C 对 D 的引用，而 A 获得了 D 的引用。标记继续进行，D 就没有机会被标记为黑色了（A 已经处理过，这一轮不会再被处理）。<br>为了解决这个问题，Go 使用了内存屏障技术，它是在用户程序读取对象、创建新对象以及更新对象指针时执行的一段代码，类似于一个钩子。垃圾收集器使用了写屏障（Write Barrier）技术，当对象新增或更新时，会将其着色为灰色。这样即使与用户程序并发执行，对象的引用发生改变时，垃圾收集器也能正确处理了。<br>一次完整的 GC 分为四个阶段：</li>
+<li>1）标记准备(Mark Setup，需 STW)，打开写屏障(Write Barrier)</li>
+<li>2）使用三色标记法标记（Marking, 并发）</li>
+<li>3）标记结束(Mark Termination，需 STW)，关闭写屏障。</li>
+<li>4）清理(Sweeping, 并发)</li>
+<li>参考 fullstack<br>好与不好的点<br>好： 自动内存管理、并发标记清楚（减少了STW（stop the world）的时间）、增量回收、高并发、三色标记 高效<br>不好：非实时性（在某些情况（高负载大内存），延迟不确定，可能会出现较长的延迟）、有一定的额外开销、内存使用较大（逃逸分析）</li>
+</ul>
+<h2 id="7-Golang-GC-stw-（stop-the-world）"><a href="#7-Golang-GC-stw-（stop-the-world）" class="headerlink" title="7. Golang GC stw （stop-the-world）"></a>7. Golang GC stw （stop-the-world）</h2><p>STW（Stop-The-World）是指在某些阶段，垃圾回收器需要暂停应用程序的所有goroutine来完成一些关键操作。虽然Go的垃圾回收器设计旨在尽量减少STW的时间，但STW仍然是影响应用程序响应性能的一个重要因素<br>STW主要发生在以下阶段：</p>
+<ol>
+<li>初始标记阶段：</li>
+</ol>
+<ul>
+<li>标记所有根对象（例如全局变量和goroutine栈顶的变量）为灰色，这些对象将成为GC扫描的起点。</li>
+<li>需要短暂的STW来确保在标记开始时应用程序的状态是一致的。</li>
+</ul>
+<ol start="2">
+<li>终止标记阶段：</li>
+</ol>
+<ul>
+<li>确保所有存活对象都已被正确标记为黑色。</li>
+<li>在并发标记结束后，再次进行短暂的STW来处理标记过程中可能遗漏的对象。<br>STW的影响</li>
+</ul>
+<ol>
+<li>暂停时间：</li>
+</ol>
+<ul>
+<li>STW的暂停时间会直接影响应用程序的响应速度和性能，特别是在低延迟、高实时性要求的应用中，这种暂停可能是不可接受的。</li>
+<li>Go的设计目标是尽量缩短STW的时间，通过并发和增量的回收策略来减少STW的影响。</li>
+</ul>
+<ol start="2">
+<li>延迟和抖动：</li>
+</ol>
+<ul>
+<li>虽然STW时间通常很短，但频繁的STW可能导致应用程序的延迟和抖动，影响用户体验。</li>
+<li>高负载下，STW时间可能会增加，进一步影响应用的性能。<br>具体实现和优化<br>开始STW：</li>
+<li>时机：在开始标记阶段之前，需要进行一次短暂的STW。这个STW的目的是确保所有的P（处理器）都停止在安全点，即一个不会修改堆的位置。</li>
+<li>解决方法：这个STW时间通常非常短，它确保在标记阶段开始时，所有的goroutine都不会创建新的对象或修改现有对象的指针。<br>结束STW：</li>
+<li>时机：在标记阶段结束后，需要进行一次短暂的STW。这个STW的目的是确保所有的goroutine都停止在安全点，然后进行最后一次的标记，并开始清除阶段。</li>
+<li>解决方法：这个STW的时间也通常非常短，它确保在清除阶段开始时，所有的对象都已经被正确地标记。<br>并发标记：</li>
+<li>解决方法：在标记阶段，Go的GC采用了并发标记的策略。通过写屏障（Write Barrier）技术，每次写入指针时都会标记该指针。这样，即使在标记阶段有新的对象被分配或旧的对象被更新，GC也能正确地标记这些对象。<br>并发清除：</li>
+<li>解决方法：在清除阶段，Go的GC采用了并发清除的策略。通过延迟清除（Lazy Sweeping）技术，即只在需要分配新的对象时才清除那个对象所在的内存块。<br>Go的垃圾回收器使用了许多技术来优化STW的时间：</li>
+</ul>
+<ol>
+<li>并发标记和清除：</li>
+</ol>
+<ul>
+<li>在标记阶段，大部分工作是并发进行的，只有在初始标记和终止标记阶段需要STW。</li>
+<li>清除阶段也是并发进行的，减少了需要STW的时间。</li>
+</ul>
+<ol start="2">
+<li>增量回收：</li>
+</ol>
+<ul>
+<li>增量标记使得标记过程可以分阶段进行，每个阶段都只需要短暂的STW，从而平滑GC的影响。</li>
+</ul>
+<ol start="3">
+<li>调优参数：</li>
+</ol>
+<ul>
+<li>可以通过调整GOGC参数来控制GC的频率，从而间接影响STW的时间和频率。</li>
+<li>GODEBUG环境变量提供了一些调试和调优选项，可以用于监控和分析STW时间。<br>监控STW时间<br>使用Go提供的工具可以监控和分析GC的STW时间：</li>
+</ul>
+<ol>
+<li>GODEBUG&#x3D;gctrace&#x3D;1：</li>
+</ol>
+<ul>
+<li>启用GC跟踪信息，可以在标准输出中看到每次GC的详细信息，包括STW时间。<br>pprof工具：</li>
+<li>Go内置的性能分析工具pprof可以用于分析GC的性能，查看STW时间。</li>
+</ul>
+<h2 id="8-Channel-原理"><a href="#8-Channel-原理" class="headerlink" title="8. Channel 原理"></a>8. Channel 原理</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> hchan <span class="keyword">struct</span> &#123;</span><br><span class="line">    qcount   <span class="type">uint</span>           <span class="comment">// 队列中已存数据的数量</span></span><br><span class="line">    dataqsiz <span class="type">uint</span>           <span class="comment">// 环形队列的大小</span></span><br><span class="line">    buf      unsafe.Pointer <span class="comment">// 环形队列指针</span></span><br><span class="line">    elemsize <span class="type">uint16</span>         <span class="comment">// 元素大小</span></span><br><span class="line">    closed   <span class="type">uint32</span>         <span class="comment">// 标记通道是否已关闭</span></span><br><span class="line">    elemtype *_type         <span class="comment">// 元素类型</span></span><br><span class="line">    sendx    <span class="type">uint</span>           <span class="comment">// 下一个发送位置的索引</span></span><br><span class="line">    recvx    <span class="type">uint</span>           <span class="comment">// 下一个接收位置的索引</span></span><br><span class="line">    recvq    waitq          <span class="comment">// 等待接收的 goroutine 队列</span></span><br><span class="line">    sendq    waitq          <span class="comment">// 等待发送的 goroutine 队列</span></span><br><span class="line">    lock     mutex          <span class="comment">// 互斥锁，保护 hchan 的并发访问</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> waitq <span class="keyword">struct</span> &#123;</span><br><span class="line">    first *sudog</span><br><span class="line">    last  *sudog</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>channel主要用在goroutine之间进行通信和同步，底层实现相当复杂，它的核心数据结构是hchan结构体，定义在runtime包里，hchan结构体主要包含环形队列、等待队列，锁、以及消息相关的一些字段。环形队列部分里面有一个buf指针指向内存区域，用于存储实际的数据。datasize则是环形队列的大小，sendx、recvx则是下一个发送接收的位置索引。当发送数据时，如果环形队列未满，则会把数据复制到sendx上，并更新sendx，环形队列满了就阻塞放入等待队列sendq中等待。接收数据时，如果有数据就会拉取到recvx上，同时更新recvx。没有数据则阻塞放入recvq队列中等待。为了保证并发访问，通过lock互斥锁来确保操作是安全的，channel关闭的时候会对其进行标记，以及唤醒等待队列中的goroutine，进行处理。总的来说，channel通过hchan结构体实现，通过环形队列、等待队列、和互斥锁来并发管理数据传输同步。保证了goroutine之间安全高效的传递数据。<br>channel是goroutine之间通信的管道，可以用来传递数据，发送方通过 ch &lt;-  操作符发送数据到通道，接收方通过&lt;- ch  操作符从通道接收数据</p>
+<p>无缓冲的channel， 发送方将阻塞该信道，直到接收方从该信道接收完数据为止，而接收方也将阻塞该信道，直到发送方将数据发送道该信道中为止<br>有缓冲道channel，发送方在缓冲区未满的时候不会阻塞，如果缓冲区满了，则阻塞，接收方则会在信道为空的时候阻塞</p>
+<h2 id="9-GMP模型"><a href="#9-GMP模型" class="headerlink" title="9. GMP模型"></a>9. GMP模型</h2><p>GMP 模型是 Go 语言运行时系统（runtime system）中的一种并发调度模型，用于管理 Goroutine 和操作系统线程之间的关系。GMP 模型中的主要组件包括 Goroutine、M（Machine）和 P（Processor）。</p>
+<ol>
+<li>Goroutine：Goroutine 是 Go 语言中轻量级的并发执行单元，类似于线程，但是比线程更加轻量级和高效。Goroutine 是由 Go 运行时系统调度执行的，并且可以通过 go 关键字创建。</li>
+<li>M（Machine）：M 是操作系统线程的抽象，负责执行 Goroutine。M 被 Go 运行时系统管理，可以创建和销毁，也可以被重新利用。</li>
+<li>P（Processor）：P 是 Goroutine 和 M 之间的连接，负责调度 Goroutine 到 M 上执行。P 与操作系统线程是一对一的关系，一个 P 对应一个 M。<br>在 GMP 模型中，P 负责调度 Goroutine 到 M 上执行，而 M 负责执行 Goroutine。为了避免全局队列饥饿的问题，Go 运行时系统实现了以下几种策略：</li>
+</ol>
+<ul>
+<li>抢占式调度：Go 运行时系统采用抢占式调度策略，当一个 Goroutine 执行时间过长时，会被强制挂起，并重新调度其他 Goroutine。这样可以避免某个 Goroutine 占用太多的 CPU 时间，导致其他 Goroutine 无法执行。</li>
+<li>局部队列和全局队列：Go 运行时系统中有两种类型的队列：局部队列和全局队列。每个 P 都有自己的局部队列，用于存储待执行的 Goroutine。当一个 P 的局部队列为空时，它会从全局队列中获取 Goroutine 来执行，这样可以避免某个 P 的局部队列耗尽，导致该 P 无法执行任何 Goroutine。</li>
+<li>工作窃取（Work Stealing）：当一个 P 的局部队列为空，但是其他 P 的局部队列中有待执行的 Goroutine 时，该 P 可以从其他 P 的局部队列中窃取 Goroutine 来执行。这样可以实现 Goroutine 的负载均衡，避免某个 P 长时间空闲。<br>通过以上策略，Go 运行时系统可以有效地避免全局队列饥饿问题，实现了高效的 Goroutine 调度和执行。</li>
+</ul>
+<h2 id="10-context包了解吗"><a href="#10-context包了解吗" class="headerlink" title="10. context包了解吗"></a>10. context包了解吗</h2><p>context ：上下文，主要用来在 goroutine 之间传递上下文信息，包括：取消信号、超时时间、截止时间、k-v 等。主要用于管理goroutine的生命周期，可以处理并发时候的取消、超时和传递上下文的消息</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="comment">//取消</span></span><br><span class="line">ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line"><span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// Do some work</span></span><br><span class="line">    time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">    cancel()  <span class="comment">// Cancel the context</span></span><br><span class="line">&#125;()</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line"><span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">    fmt.Println(<span class="string">&quot;Operation cancelled&quot;</span>)</span><br><span class="line"><span class="keyword">case</span> &lt;-time.After(<span class="number">5</span> * time.Second):</span><br><span class="line">    fmt.Println(<span class="string">&quot;Operation completed&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//超时</span></span><br><span class="line">ctx, cancel := context.WithTimeout(context.Background(), <span class="number">2</span>*time.Second)</span><br><span class="line"><span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> &#123;</span><br><span class="line"><span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">    fmt.Println(<span class="string">&quot;Operation timed out:&quot;</span>, ctx.Err())</span><br><span class="line"><span class="keyword">case</span> &lt;-time.After(<span class="number">3</span> * time.Second):</span><br><span class="line">    fmt.Println(<span class="string">&quot;Operation completed&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//传递数据</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ctx := context.WithValue(context.Background(), <span class="string">&quot;requestID&quot;</span>, <span class="string">&quot;12345&quot;</span>)</span><br><span class="line">    handleRequest(ctx)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleRequest</span><span class="params">(ctx context.Context)</span></span> &#123;</span><br><span class="line">    reqID := ctx.Value(<span class="string">&quot;requestID&quot;</span>).(<span class="type">string</span>)</span><br><span class="line">    fmt.Println(<span class="string">&quot;Handling request with ID:&quot;</span>, reqID)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 协同</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    ctx, cancel := context.WithCancel(context.Background())</span><br><span class="line">    <span class="keyword">defer</span> cancel()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; <span class="number">3</span>; i++ &#123;</span><br><span class="line">        <span class="keyword">go</span> worker(ctx, i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    time.Sleep(<span class="number">2</span> * time.Second)</span><br><span class="line">    cancel()  <span class="comment">// Cancel all workers</span></span><br><span class="line">    time.Sleep(<span class="number">1</span> * time.Second)  <span class="comment">// Give workers time to clean up</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">worker</span><span class="params">(ctx context.Context, id <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        <span class="keyword">select</span> &#123;</span><br><span class="line">        <span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">            fmt.Println(<span class="string">&quot;Worker&quot;</span>, id, <span class="string">&quot;cancelled&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">default</span>:</span><br><span class="line">            fmt.Println(<span class="string">&quot;Worker&quot;</span>, id, <span class="string">&quot;working&quot;</span>)</span><br><span class="line">            time.Sleep(<span class="number">500</span> * time.Millisecond)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="11-map原理，为什么是无序的"><a href="#11-map原理，为什么是无序的" class="headerlink" title="11. map原理，为什么是无序的"></a>11. map原理，为什么是无序的</h2><p>go语言中，map通过哈希函数将key分配到不同的桶中，其主要的开销在哈希函数的计算和数组的常数访问时间，因此哈希表的查找性能很高。由于是哈希函数分配可能存在哈希冲突，主要使用链地址法或开放地址法来解决哈希冲突<br>map为什么是无序的：由于map会动态扩容，会复制key到扩容之后的的桶中在扩容之后，原本落在同一个桶里的key会发生变化，因此是无序的<br>key取值：理论上除去map、slice、function都可以作为key<br>map是线程不安全的，理论上可以边删边读，但是可能存在读取数据不一致的问题<br>sync.Map 是线程安全的 map，也可以使用</p>
+<h2 id="12-协程的优势"><a href="#12-协程的优势" class="headerlink" title="12. 协程的优势"></a>12. 协程的优势</h2><p>轻量：只占用很少的内存（2kb）、高并发、简单、上下文切换只在用户态中进行，更加高效，自带调度器自动管理、自动垃圾回收</p>
+<h2 id="13-进程、线程、协程"><a href="#13-进程、线程、协程" class="headerlink" title="13. 进程、线程、协程"></a>13. 进程、线程、协程</h2><p>线程和协程区别，要从栈的大小、调度、切换这三个角度来讲。<br>进程可以理解为一个动态的程序，进程是操作系统资源分配的基本单位，而线程是操作系统调度的基本单位，进程独占一个虚拟内存空间，而进程里的线程共享一个进程虚拟内存空间。线程的粒度更小<br>协程可以理解为用户态线程，跟线程的区别主要有三个方面<br>大小，协程到校为2k，可以动态扩容，而线程大小为2m,协程更轻量<br>线程切换需要用户态到内核态的切换，而协程的切换不用，只在用户态完成，切换消耗更小<br>线程的调度由操作系统完成，而协程的调度由运行时的调度器完成</p>
+<h2 id="14-内存泄漏，为什么，怎么排查"><a href="#14-内存泄漏，为什么，怎么排查" class="headerlink" title="14. 内存泄漏，为什么，怎么排查"></a>14. 内存泄漏，为什么，怎么排查</h2><p>内存泄漏主要是因为分配的内存无法回收，长时间占用，导致内存占用不断增长，可能会导致耗尽系统资源<br>主要的原因：<br>全局变量持有引用：全局变量持有短生命周期对象的引用，导致短周期的对象无法回收<br>未关闭的通道：通道未正确关闭，导致阻塞或者不必要的引用<br>Goroutine泄漏：goroutine未正常退出，导致持有大量资源<br>缓存与集合未及时清理<br>闭包中的变量引用<br>如何排查：<br>可以使用pprof工具或者runtime包查看内存情况</p>
+<h2 id="15-如何分配内存"><a href="#15-如何分配内存" class="headerlink" title="15. 如何分配内存"></a>15. 如何分配内存</h2><p>golang运行时的内存分配主要源于tcmalloc算法，将内存分为多级管理，从而降低锁的力度。在程序启动的时候会申请一大块内存，自行管理，go内存管理的基本单位是mspan，有若干页组成，每个mspan可以分配特定大小的object。通过，mcache管理线程在本地缓存的mspan， mcentral管理全局的mspan供所有线程用，mheap管理所有的动态内存分配。根据对象大小进行分配，极小对象分配到object中，一般小对象通过mspan分配，而大对象则有mheap分配</p>
+<h2 id="16-channel分配在堆上还栈上"><a href="#16-channel分配在堆上还栈上" class="headerlink" title="16. channel分配在堆上还栈上"></a>16. channel分配在堆上还栈上</h2><p>go语言编译器会自动决定把对象分配在堆上或者栈上，如果变量作用范围在函数的生命周期内则分配在栈上，否则分配到堆上<br>Channel通常是分配到堆上的，由于channel是在多个goroutine之间使用的，需要跨函数使用，以及goroutine运行在不同的栈上，而需要channel通信，channel更适合在堆上，具体放在哪可以使用逃逸分析查看</p>
+<h2 id="17-为什么小对象多了会造成gc压力"><a href="#17-为什么小对象多了会造成gc压力" class="headerlink" title="17. 为什么小对象多了会造成gc压力"></a>17. 为什么小对象多了会造成gc压力</h2><p>因为go中gc是标记清除算法，无论大小对象都会被管理，如果是大量小对象会增加标记清除是的开销，都是标记阶段遍历对象的时候会增加cpu负担，由于小对象生命周期较短也会频繁触发gc导致gc频繁运行，会引起stw影响系统性能。由于小对象还更容易导致内存碎片化</p>
+<h2 id="18-Go-func与method之前的那个Receiver是什么？"><a href="#18-Go-func与method之前的那个Receiver是什么？" class="headerlink" title="18. Go func与method之前的那个Receiver是什么？"></a>18. Go func与method之前的那个Receiver是什么？</h2><p>go中函数和方法的区别在于有没有与某种类型相关联，函数通过使用receiver（接收器）与一个知道方法作用的对象相关联，可以是任意类型，通过接收器传递给方法，方法可以通过接收器访问操作对象的数据</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个类型</span></span><br><span class="line"><span class="keyword">type</span> Rectangle <span class="keyword">struct</span> &#123;</span><br><span class="line">    width, height <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Rectangle类型的方法</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r Rectangle)</span></span> Area() <span class="type">int</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> r.width * r.height</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 创建Rectangle对象</span></span><br><span class="line">    rect := Rectangle&#123;width: <span class="number">10</span>, height: <span class="number">5</span>&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用方法</span></span><br><span class="line">    area := rect.Area()</span><br><span class="line">    fmt.Println(<span class="string">&quot;Area:&quot;</span>, area)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="19-Go的闭包语法"><a href="#19-Go的闭包语法" class="headerlink" title="19.  Go的闭包语法"></a>19.  Go的闭包语法</h2><p>通过匿名函数实现的，不需要函数名，直接定义使用就可以，闭包就是一个函数值，引用了函数体之外的变量</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">// 定义一个外部变量</span></span><br><span class="line">    x := <span class="number">10</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 定义一个闭包，引用外部变量x</span></span><br><span class="line">    add := <span class="function"><span class="keyword">func</span><span class="params">(y <span class="type">int</span>)</span></span> <span class="type">int</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> x + y</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 调用闭包</span></span><br><span class="line">    result := add(<span class="number">5</span>)</span><br><span class="line">    fmt.Println(result) <span class="comment">// 输出：15</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>面试</tag>
+      </tags>
   </entry>
 </search>

@@ -5,3 +5,4 @@ https://zzzpyyy.github.io/golang_study_guide.github.io/categories/index.html
 https://zzzpyyy.github.io/golang_study_guide.github.io/2024/06/08/test/
 https://zzzpyyy.github.io/golang_study_guide.github.io/2024/06/08/hello-world/
 https://zzzpyyy.github.io/golang_study_guide.github.io
+https://zzzpyyy.github.io/golang_study_guide.github.io/tags/%E9%9D%A2%E8%AF%95/
